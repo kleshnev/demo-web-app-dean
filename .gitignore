@@ -1,0 +1,7 @@
+# Ignore build output
+/backend/target/
+/frontend/build/
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
