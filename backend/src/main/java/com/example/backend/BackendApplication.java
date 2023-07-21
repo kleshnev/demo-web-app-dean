@@ -1,13 +1,32 @@
 package com.example.backend;
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 @SpringBootApplication
+@EnableJpaRepositories("com.example.backend.repository")
+
 public class BackendApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		SpringApplication.run(BackendApplication.class, args);
+		String pathToServiceAccountKey = BackendApplication.class.getResource("/serviceAccountKey.json").getPath();
+		FileInputStream serviceAccount = new FileInputStream(pathToServiceAccountKey);
+
+		FirebaseOptions options = new FirebaseOptions.Builder()
+				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
+				.setDatabaseUrl("https://web-app-dean.firebaseio.com")
+				.build();
+
+		FirebaseApp.initializeApp(options);
 	}
 
 }
