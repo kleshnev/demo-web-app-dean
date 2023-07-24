@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/api")
 public class RoomController {
@@ -23,7 +25,7 @@ public class RoomController {
     }
 
     @PostMapping("/create-room")
-    public ResponseEntity<Room> createRoom(@RequestBody RoomCreationRequest request) {
+    public ResponseEntity<Room> createRoom(@RequestBody RoomCreationRequest request) throws ExecutionException, InterruptedException {
         Room room = roomService.createRoom(request.getName(), request.getDescription());
         return new ResponseEntity<>(room, HttpStatus.CREATED);
     }

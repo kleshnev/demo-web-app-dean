@@ -5,14 +5,11 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 
 @SpringBootApplication
-@EnableJpaRepositories("com.example.backend.repository")
 
 public class BackendApplication {
 
@@ -28,5 +25,4 @@ public class BackendApplication {
 
 		FirebaseApp.initializeApp(options);
 	}
-
 }
