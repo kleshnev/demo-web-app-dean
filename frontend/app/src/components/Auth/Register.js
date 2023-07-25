@@ -18,10 +18,13 @@ const Register = () => {
       // Handle the response from the backend if needed (e.g., show a success message)
       console.log("Registration successful!");
     } catch (error) {
-      // Handle registration error (e.g., show an error message)
-      setError("Registration failed. Please try again.");
-    }
+      if (error.response && error.response.status === 409) {
+        setError("User with this username already exists.");
+      } else {
+        setError("An error occurred while registering the user.");
+      }
   };
+}
 
   return (
     <div>

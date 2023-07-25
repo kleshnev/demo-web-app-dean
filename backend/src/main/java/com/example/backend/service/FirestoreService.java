@@ -1,33 +1,50 @@
 package com.example.backend.service;
 
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.FirestoreOptions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import com.example.backend.entity.User;
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.*;
+
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class FirestoreService {
 
-    @Value("classpath:serviceAccountKey.json")
-    private Resource keyFile;
+    private final Firestore firestore;
+    private final CollectionReference usersCollection;
 
-    public Firestore initializeFirestore() throws IOException {
-        FirestoreOptions options = FirestoreOptions.newBuilder()
-                .setCredentials(GoogleCredentials.fromStream(keyFile.getInputStream()))
-                .build();
-        return options.getService();
+    public FirestoreService(Firestore firestore) {
+        this.firestore = firestore;
+        this.usersCollection = firestore.collection("users");
     }
 
-    // Add other Firestore-related methods here as needed
+    public boolean isUserExists(String username) {
+        Query query = usersCollection.whereEqualTo("username", username).limit(1);
+        try {
+            ApiFuture<QuerySnapshot> querySnapshot = query.get();
+            return !querySnapshot.get().isEmpty();
+        } catch (InterruptedException | ExecutionException e) {
+            // Handle the exception
+            return false;
+        }
+    }
 
+    public void addUser(User user) {
+        usersCollection.add(user);
+    }
+
+    public User getUserByUsername(String username) {
+        Query query = usersCollection.whereEqualTo("username", username).limit(1);
+        try {
+            ApiFuture<QuerySnapshot> querySnapshot = query.get();
+            for (QueryDocumentSnapshot document : querySnapshot.get().getDocuments()) {
+                return document.toObject(User.class);
+            }
+            return null;
+        } catch (InterruptedException | ExecutionException e) {
+            // Handle the exception
+            return null;
+        }
+    }
 }
-
-// ... rest of the service code

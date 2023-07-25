@@ -3,8 +3,11 @@ package com.example.backend.controller;
 import com.example.backend.DTO.AuthResponse;
 import com.example.backend.DTO.UserRegistrationRequest;
 import com.example.backend.entity.User;
+import com.example.backend.exception.BadCredentialsException;
+import com.example.backend.exception.UserAlreadyExistsException;
 import com.example.backend.service.UserService;
 import com.example.backend.utils.JwtTokenUtil;
+import org.apache.http.auth.InvalidCredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +30,17 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody UserRegistrationRequest request) throws Exception {
-        User newUser = userService.registerUser(request.getUsername(), request.getPassword());
-        System.out.println("TRYING TO REG USER");
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest request) throws Exception {
+        try {
+            User newUser = userService.registerUser(request.getUsername(), request.getPassword());
+            return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        } catch (UserAlreadyExistsException e) {
+            return new ResponseEntity<>("User with this username already exists.", HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            return new ResponseEntity<>("INTERNAL ERROR" , HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     @PostMapping("/custom-login")
     public ResponseEntity<?> customLogin(@RequestBody UserRegistrationRequest authRequest) throws Exception {
@@ -43,11 +52,21 @@ public class UserController {
         }
     }
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserRegistrationRequest authRequest){
-        // You no longer need the authenticationManager and try-catch block
+    public ResponseEntity<?> login(@RequestBody UserRegistrationRequest authRequest) {
+        try {
 
-        final String token = jwtTokenUtil.generateToken(authRequest.getUsername());
-
-        return ResponseEntity.ok(new AuthResponse(token));
+            User user = userService.authenticateUser(authRequest.getUsername(), authRequest.getPassword());
+            System.out.println("getting USER" + user.getUsername() + user.getPassword());
+            String token = jwtTokenUtil.generateToken(user.getUsername());
+            System.out.println("getting token" + token);
+            System.out.println("nice token is done!");
+            return ResponseEntity.ok(new AuthResponse(token));
+        } catch (InvalidCredentialsException e) {
+            System.out.println("invalid credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");
+        } catch (Exception e) {
+            System.out.println("idk error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Login failed.");
+        }
     }
 }
