@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -12,17 +12,24 @@ const Login = () => {
     e.preventDefault();
     try {
       // Send login request to the correct login endpoint
-      const response = await axios.post("/api/custom-login", {
+      const response = await axios.post("/api/login", {
         username: username,
         password: password,
       });
 
       // Assuming the server returns a success response upon successful login
       // For example, you can return a status code 200 or a specific success message
-      // If login is successful, you can handle the redirection here.
+      // If login is successful, the server should return a JWT token in the response.
+      // Extract the token from the response data.
+      const token = response.data.token;
+
+      // Store the token securely in an httpOnly cookie.
+      // Make sure to set the "httpOnly" and "secure" flags for better security.
+      document.cookie = `token=${token}; path=/; HttpOnly; Secure`;
+
       console.log("Login successful!");
       // Redirect to the dashboard or any other authenticated page
-      navigate('/home');
+      navigate("/home");
     } catch (error) {
       setError("Invalid username or password");
     }
