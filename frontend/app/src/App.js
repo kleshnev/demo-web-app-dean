@@ -1,19 +1,30 @@
-import React from "react";
-import Login from './components/Auth/Login'; // Update the import path
+import React, { useState } from "react";
+import LoginPage from './components/Auth/LoginPage'; // Update the import path
 import Register from "./components/Auth/Register";
+import Home from "./components/Home/Home";
+
 import { BrowserRouter as Router, Routes ,Route } from 'react-router-dom';
 
-function App() {
+
+const App = () => {
+  const [loggedInUser, setLoggedInUser] = useState(""); // Initialize with an empty string
+
   return (
-   <Router>
-      <div className="App">
-        <Routes>
-          <Route exact path="/login" element={ <Login/>} />
-          <Route exact path="/register" element={ <Register/>} />
-        </Routes>
-      </div>
-      </Router>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={<LoginPage setLoggedInUser={setLoggedInUser} />}
+        />
+        <Route
+          path="/home"
+          element={<Home loggedInUser={loggedInUser} />}
+        />
+        <Route exact path="/register" element={ <Register/>} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
+
