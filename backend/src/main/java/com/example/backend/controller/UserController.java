@@ -41,31 +41,18 @@ public class UserController {
         }
     }
 
-
-    @PostMapping("/custom-login")
-    public ResponseEntity<?> customLogin(@RequestBody UserRegistrationRequest authRequest) throws Exception {
-        // For this example, let's assume login is successful if the username is "test" and password is "password"
-        if ("test".equals(authRequest.getUsername()) && "password".equals(authRequest.getPassword())) {
-            return ResponseEntity.ok(new AuthResponse("login_successful")); // Return a success response
-        } else {
-            throw new Exception("Invalid username or password"); // Return an error response if login fails
-        }
-    }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserRegistrationRequest authRequest) {
         try {
 
             User user = userService.authenticateUser(authRequest.getUsername(), authRequest.getPassword());
-            System.out.println("getting USER" + user.getUsername() + user.getPassword());
             String token = jwtTokenUtil.generateToken(user.getUsername());
-            System.out.println("getting token" + token);
-            System.out.println("nice token is done!");
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (InvalidCredentialsException e) {
             System.out.println("invalid credentials");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");
         } catch (Exception e) {
-            System.out.println("idk error");
+            System.out.println("ERROR");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Login failed.");
         }
     }
