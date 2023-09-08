@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+
+///The JwtTokenInterceptor automatically intercept HTTP requests and add the JWT token to the request headers.
 @Component
 public class JwtTokenInterceptor implements HandlerInterceptor {
 
