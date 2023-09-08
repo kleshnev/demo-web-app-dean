@@ -19,12 +19,15 @@ const LoginPage = ({ setLoggedInUser }) => {
 
       const token = response.data.token;
       document.cookie = `token=${token}; path=/; HttpOnly; Secure`;
-      localStorage.setItem("username", username);
+      console.log("setLoggedInUser:", setLoggedInUser);
+      localStorage.setItem("token", token); // Store the token in localStorage
+      localStorage.setItem("loggedInUser", username);
       console.log("Login successful!");
       setLoggedInUser(username); // Set the logged-in user
+      console.log("Updated loggedInUser:", username);
       navigate("/home");
     } catch (error) {
-      setError("Invalid username or password");
+      setError("Invalid username or password"); 
     }
   };
 

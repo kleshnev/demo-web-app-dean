@@ -1,0 +1,9 @@
+.room {
+    background: rgb(238, 174, 202);
+    background: radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(148, 187, 233, 1) 100%);
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-family: Arial, sans-serif;
+    /* Add any other styles you need for the .room class */
+}

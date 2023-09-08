@@ -1,0 +1,11 @@
+
+/* src/components/Home.css */
+.home-container {
+  text-align: center;
+}
+
+.home-container h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
